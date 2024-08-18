@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import sqlite3
 
 def connect_db():
@@ -94,14 +95,16 @@ def delete_student(ids):
         cur = con.cursor()
         SQL='''
             DELETE FROM student
-            WHERE id = '''+ids
+            WHERE id = '''+ str(ids)
         cur.execute(SQL)
         con.commit()
         con.close()
     except:
-        print("can not delete record!")
+        # print("can not delete record!")
+        messagebox.showwarning("warning","can not delete record!")
     else:
-        print("delete record successfully")
+        # print("delete record successfully")
+        messagebox.showinfo("delete","delete record successfully")
         show_table() 
 
 def show_table():
@@ -185,8 +188,9 @@ def getselectedrow(event):
 def delete():
     if list1.curselection():
         ids = studentId.get()
-        delete_student(ids)
-
+        q = messagebox.askquestion("delete","do you want delete student" + str(ids))
+        if q == "yes":            
+            delete_student(ids)
 
 root = Tk()
 root.title("StudentDB")
@@ -255,6 +259,13 @@ list1.bind("<<ListboxSelect>>", getselectedrow)
 
 # create_file()
 show_table()
+# messagebox.showinfo("Your welcome","thanks")
+# messagebox.showwarning("warning","hello")
+# q = messagebox.askquestion("delete","do you want delete")
+# if q == "yes":
+#     print(q)
+# else:
+#     print("Sorry")
 root.geometry("755x260")
 root.resizable(width= False, height= False)
 color= "orange"
