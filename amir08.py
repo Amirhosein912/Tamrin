@@ -88,8 +88,7 @@ def edit_student(ids, name, family, score1, score2, score3):
         print("one record has been updated") 
         show_table() 
 
-def delete_student():
-    ids = input("plz enter student id")
+def delete_student(ids):
     try:
         con = connect_db()
         cur = con.cursor()
@@ -103,6 +102,7 @@ def delete_student():
         print("can not delete record!")
     else:
         print("delete record successfully")
+        show_table() 
 
 def show_table():
     #ids = input("plz enter student id")
@@ -182,15 +182,11 @@ def getselectedrow(event):
         course3.set(row[5])
         print(row)
 
-def delete(event):
+def delete():
     if list1.curselection():
-        i = list1.curselection()[0]
-        row = list1.get(i)        
-        studentname.set(row[0])
-        studentfamily.set(row[2])
-        studentId.set(row[4])
-        list1.delete(i,i)
-        print(row)
+        ids = studentId.get()
+        delete_student(ids)
+
 
 root = Tk()
 root.title("StudentDB")
