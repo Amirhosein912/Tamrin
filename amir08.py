@@ -59,10 +59,7 @@ def new_student(ids, name, family, score1, score2, score3):
         print("one record has been create added")
         show_table()
 
-def edit_student():
-    ids = input("plz enter student id:")
-    name = input("plz enter student name:")
-    family = input("plz enter student family:")
+def edit_student(ids, name, family, score1, score2, score3):   
     s = 0
     s+= score1
     s+= score2
@@ -80,7 +77,7 @@ def edit_student():
                     score3 = ''' + str(score3) + ''',
                     sum = ''' + str(s) + ''',
                     avg = ''' + str(avg) + '''
-            WHERE id = ''' + ids
+            WHERE id = ''' + str(ids)
                 
         cur.execute(SQL)
         con.commit()
@@ -88,7 +85,8 @@ def edit_student():
     except:
         print("can not update record!")
     else:
-        print("one record has been updated")  
+        print("one record has been updated") 
+        show_table() 
 
 def delete_student():
     ids = input("plz enter student id")
@@ -156,18 +154,18 @@ def fill():
     score1 = course1.get()
     score2 = course2.get()
     score3 = course3.get()
-
-    # myRow = (ids, name, family)
     new_student(ids, name, family, score1, score2, score3)
 
-    # list1.insert(END,myRow)
+def updateStudent():
+    ids = studentId.get()
+    name = nameinput.get()
+    family = familyinput.get()
+    score1 = course1.get()
+    score2 = course2.get()
+    score3 = course3.get()
 
-    # studentname.set(nameinput.get())
-    # studentfamily.set(familyinput.get())
-    # studentId.set(ageinput.get())
-    # print(studentname.get())
-    # print(studentfamily.get())
-    # print(studentId.get())
+    edit_student(ids, name, family, score1, score2, score3)
+
 
 def exit():
     root.destroy()
@@ -179,6 +177,9 @@ def getselectedrow(event):
         studentId.set(row[0])
         studentname.set(row[1])
         studentfamily.set(row[2])        
+        course1.set(row[3])
+        course2.set(row[4])
+        course3.set(row[5])
         print(row)
 
 def delete(event):
@@ -216,7 +217,7 @@ lbl4.grid(row=3,column=0)
 btnSave = Button(root,text="ذخیره",command=fill)
 btnSave.place(x=265,y=1)
 
-btnEdit = Button(root,text="ویرایش",command=getselectedrow)
+btnEdit = Button(root,text="ویرایش",command=updateStudent)
 btnEdit.place(x=309,y=1)
 
 btnDelete = Button(root,text="حذف",command=delete)
@@ -254,7 +255,7 @@ sb1.grid(row=10,column=5,sticky= N+S+W)
 list1.configure(yscrollcommand=sb1.set)
 sb1.configure(command=list1.yview)
 
-list1.bind("<<ListboxSelect>>",getselectedrow)
+list1.bind("<<ListboxSelect>>", getselectedrow)
 
 # create_file()
 show_table()
