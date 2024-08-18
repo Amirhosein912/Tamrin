@@ -107,13 +107,13 @@ def delete_student(ids):
         messagebox.showinfo("delete","delete record successfully")
         show_table() 
 
-def show_table():
+def show_table(where = "1"):
     #ids = input("plz enter student id")
     con = connect_db()
     cur = con.cursor()
     SQL = '''
         SELECT * FROM student
-        WHERE 1 '''
+        WHERE ''' + where
     cur.execute(SQL)
     list1.delete(0, END)
     for i in cur:
@@ -192,6 +192,26 @@ def delete():
         if q == "yes":            
             delete_student(ids)
 
+def searching():    
+    name = nameinput.get()
+    family = familyinput.get()
+    
+    whereClause = None
+    
+    if name:
+        nameClause = "name like '%" + name + "%'"
+        whereClause = nameClause  
+
+    if family:
+        familyClause = "family like '%" + family + "%'"
+        if whereClause:
+            whereClause += " and " + familyClause    
+        else:
+            whereClause = familyClause   
+    
+    if whereClause:
+        show_table(whereClause)
+
 root = Tk()
 root.title("StudentDB")
 
@@ -214,6 +234,9 @@ lbl3.grid(row=2,column=0)
 lbl4 = Label(root,text= "درس ها")
 lbl4.grid(row=3,column=0)
 
+# lbl4 = Label(root,text= "search")
+# lbl4.grid(row=4,column=0)
+
 btnSave = Button(root,text="ذخیره",command=fill)
 btnSave.place(x=265,y=1)
 
@@ -222,6 +245,9 @@ btnEdit.place(x=309,y=1)
 
 btnDelete = Button(root,text="حذف",command=delete)
 btnDelete.place(x=360,y=1)
+
+btnSearch = Button(root,text="جستجو",command=searching)
+btnSearch.place(x=450,y=1)
 
 btnExit = Button(root,text="خروج",command=exit)
 btnExit.place(x=400,y=1)
@@ -243,6 +269,9 @@ courseinput2.grid(row=3,column=2)
 
 courseinput3 = Entry(root,textvariable= course3)
 courseinput3.grid(row=3,column=3)
+
+# searchinput = Entry(root,textvariable= course3)
+# searchinput.grid(row=4,column=1)
 
 
 
