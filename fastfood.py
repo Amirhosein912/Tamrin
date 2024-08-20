@@ -1,6 +1,7 @@
 from tkinter import * 
 from tkinter import messagebox
 import sqlite3
+from datetime import datetime
 
 def connect_db():
     try:
@@ -16,13 +17,13 @@ def create_file():
         con = connect_db()
         cur = con.cursor()
         sql = '''
-            CREATE TABLE IF NOT EXISTS menu(
-            sandwich varchar(30),
-            pizza varchar(30),
-            drink varchar(30),
-            sandwich_price float,
-            pizza_price float,
-            drink_price float
+             CREATE TABLE IF NOT EXISTS menuFood(
+                order_id int,
+                order_detail varchar(255),
+                customer_name varchar(50),
+                phone varchar(11),
+                total_price int,
+                order_date dateTime
             )
         '''
         cur.execute(sql)
@@ -32,6 +33,41 @@ def create_file():
         print("can not create table!")
     else:
         print("table has been created suxxssfully")
+
+def addToDb(orderId,order_detail):
+    phone = '09331187978' #phoneInput.get()
+    total_price = 0
+    customer_name = "AmirHoussain"
+    order_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    
+    for items in order_detail.items():
+        print(items[0])
+        for item in items[1].items():
+            if item[0] == "price":
+                total_price += item[1]
+            print(item)
+
+    
+    print(total_price)
+    try:
+        con = connect_db()
+        cur = con.cursor()
+        SQL ='''
+            INSERT INTO menuFood
+                (order_id,order_detail,customer_name,phone,total_price,order_date)
+            VALUES
+                (''' + str(orderId) + ''',"'''+ str(order_detail) +'''","'''+ str(customer_name) +'''","'''+ str(phone) +'''",''' + str(total_price) + ''',"''' + str(order_date) + '''")
+        '''
+        print(SQL)
+        cur.execute(SQL)
+        con.commit()
+        con.close()
+    except:
+        print("can not insert into table!")
+    else:
+        print("one record has been create added")
+       
 
 def new_menu(sandwich, pizza, drink, sandwich_price, pizza_price, drink_price):
     try:
@@ -122,10 +158,11 @@ def addOrder():
     elif choice == 3:
         price = sodaPrice * num    
         myDict={"foodname":"soda","num":num, "price":price}
+    
     orderInfo.set(price)
 
     orderDict[orderId] = myDict
-    
+
     print(orderDict)
     # sandwich = sandwich.get()
     # pizza = pizza.get()
@@ -167,6 +204,10 @@ def delete():
         q = messagebox.askquestion("delete","do you want delete student" + menu)
         if q == "yes":            
             delete_menu(menu)
+create_file()
+# order_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# print(order_date)
+# # print(datetime.now())
 
 root = Tk()
 root.title("fastfood.db")
@@ -218,7 +259,7 @@ numberOfOrderInput.grid(row=4,column=1)
 btnSave = Button(root,text="افزودن سفارش", command=lambda : addOrder())
 btnSave.place(x=200,y=1)
 
-btnSave = Button(root,text="ثبا نهایی ", command=addOrder)
+btnSave = Button(root,text="ثبا نهایی ", command=lambda:addToDb(orderId, orderDict))
 btnSave.place(x=265,y=1)
 
 btnEdit = Button(root,text="ویرایش",command=update_menu)
